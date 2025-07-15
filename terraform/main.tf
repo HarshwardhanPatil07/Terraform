@@ -38,3 +38,41 @@ resource "aws_subnet" "dev-subnet-2" {
 }
 
 # done till 1 VPC and 2 subnets
+
+# when want to output the VPC ID and Subnet IDs
+output "dev-vpc_id" {
+  value = aws_vpc.development-vpc.id
+}
+
+output "dev-subnet-1_id" {
+  value = aws_subnet.dev-subnet-1.id
+}
+
+/// Variables can be defined in a separate file, e.g., terraform.tfvars
+
+
+# provider "aws" {
+#   region = "ap-south-1"
+#   # Credentials should be provided via environment variables or AWS CLI configuration
+#   # For security, never hardcode credentials in your Terraform files
+# }
+
+# variable "subnet_cidr_block" {
+#   description = "subnet cidr block"
+# }
+
+# resource "aws_vpc" "development-vpc" {
+#   cidr_block = "10.0.0.0/16"
+#   tags = {
+#     Name: "development"
+#       }
+# }
+
+# resource "aws_subnet" "dev-subnet-1" {
+#   vpc_id = aws_vpc.development-vpc.id
+#   cidr_block = var.subnet_cidr_block
+#   availability_zone = "ap-south-1a"
+#   tags = {
+#     Name: "subnet-1-dev"
+#   }
+# }
