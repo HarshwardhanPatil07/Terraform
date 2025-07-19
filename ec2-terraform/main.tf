@@ -10,6 +10,7 @@ variable my_ip {}
 variable instance_type {}
 # variable my_public_key {}
 variable public_key_location {}
+variable private_key_location {}
 
 
 resource "aws_vpc" "myapp-vpc" {
@@ -157,9 +158,27 @@ resource "aws_instance" "myapp-server" {
     associate_public_ip_address = true
     key_name = aws_key_pair.ssh-key.key_name
 
-    user_data = file("entry-script.sh")
+    # user_data = file("entry-script.sh")
+    user_data_replace_on_change = true
+
+    connection {
+        type = "ssh"
+        host = self.public_ip
+        user = "ec2-user"
+        private_key = file(var.private_key_location)
+    }
+    provisioner "file" {
+        source      = "entry-script.sh"
+        destination = "/home/ec2-user/entry-script-on-ec2.sh"
+    }
+    provisioner "remote-exec" {
+        script = "entry-script.sh"
+    }
+    provisioner "local-exec" {
+        command = "echo 'Instance created with public IP: ${self.public_ip}'"
+    }
     # or can directly write below like this
-    
+
     # user_data = <<EOF
     # #!/bin/bash
     # sudo yum update -y && sudo yum install -y docker
